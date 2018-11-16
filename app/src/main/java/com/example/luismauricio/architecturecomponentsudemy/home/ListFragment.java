@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,15 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.luismauricio.architecturecomponentsudemy.Lifecycle.LifecycleFragment;
 import com.example.luismauricio.architecturecomponentsudemy.R;
+import com.example.luismauricio.architecturecomponentsudemy.model.Repo;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class ListFragment extends LifecycleFragment {
+public class ListFragment extends LifecycleFragment implements RepoSelectedListener {
 
     private Unbinder mUnbinder;
     @BindView(R.id.recycler_view)
@@ -50,11 +51,11 @@ public class ListFragment extends LifecycleFragment {
         observeViewModel();
         listView.setLayoutManager(new LinearLayoutManager(getContext()));
         listView.setHasFixedSize(true);
-        listView.setAdapter(new RepoAdapter(mViewModel, this));
+        listView.setAdapter(new RepoAdapter(mViewModel, this, this));
     }
 
-    private void observeViewModel() {
 
+    private void observeViewModel() {
         mViewModel.getLoading().observe(this, isLoading -> {
             loadingView.setVisibility(isLoading ? View.VISIBLE : View.INVISIBLE);
             if (isLoading) {
@@ -74,7 +75,11 @@ public class ListFragment extends LifecycleFragment {
                 listView.setVisibility(View.VISIBLE);
             }
         });
+    }
 
+    @Override
+    public void onRepoSelected(Repo repo) {
+        Toast.makeText(getActivity(), repo.name, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -85,4 +90,5 @@ public class ListFragment extends LifecycleFragment {
             mUnbinder = null;
         }
     }
+
 }

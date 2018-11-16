@@ -8,6 +8,7 @@
     android:paddingStart="16dp"
     android:paddingTop="10dp"
     android:paddingEnd="16dp"
+    android:background="?selectableItemBackground"
     android:paddingBottom="10dp">
 
     <LinearLayout

@@ -20,8 +20,9 @@ import butterknife.ButterKnife;
 public class RepoAdapter extends RecyclerView.Adapter<RepoAdapter.RepoViewHolder> {
 
     private List<Repo> data = new ArrayList<>();
+    RepoSelectedListener mRepoSelectedListener;
 
-    public RepoAdapter(ListViewModel listViewModel, LifecycleOwner lifecycleOwner) {
+    public RepoAdapter(ListViewModel listViewModel, LifecycleOwner lifecycleOwner, RepoSelectedListener repoSelectedListener) {
         listViewModel.getRepos().observe(lifecycleOwner, repos -> {
             data.clear();
             if (repos != null) {
@@ -29,13 +30,14 @@ public class RepoAdapter extends RecyclerView.Adapter<RepoAdapter.RepoViewHolder
                 notifyDataSetChanged();
             }
         });
+        mRepoSelectedListener = repoSelectedListener;
     }
 
     @NonNull
     @Override
     public RepoViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         return new RepoViewHolder(LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.view_repo_listitem, viewGroup, false));
+                .inflate(R.layout.view_repo_listitem, viewGroup, false), mRepoSelectedListener);
     }
 
     @Override
@@ -57,13 +59,18 @@ public class RepoAdapter extends RecyclerView.Adapter<RepoAdapter.RepoViewHolder
         TextView startsTextView;
         @BindView(R.id.tv_forks)
         TextView forksTextView;
+        Repo mRepo;
 
-        public RepoViewHolder(@NonNull View itemView) {
+        public RepoViewHolder(@NonNull View itemView, RepoSelectedListener repoSelectedListener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(v -> {
+                repoSelectedListener.onRepoSelected(mRepo);
+            });
         }
 
         void bind(Repo repo) {
+            mRepo = repo;
             nameTextView.setText(repo.name);
             descriptionTextView.setText(repo.description);
             startsTextView.setText(String.valueOf(repo.stars));
